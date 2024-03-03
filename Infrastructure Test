@@ -1,0 +1,23 @@
+./
+└─ 1_infrastructure
+   └─ terraform
+      ├─ main.tf
+      ├─ variables.tf
+      ├─ outputs.tf
+      └─ modules
+         ├─ vpc
+         │  ├─ main.tf
+         │  ├─ variables.tf
+         │  └─ outputs.tf
+         ├─ ecs_cluster
+         │  ├─ main.tf
+         │  ├─ variables.tf
+         │  └─ outputs.tf
+         ├─ service_discovery
+         │  ├─ main.tf
+         │  ├─ variables.tf
+         │  └─ outputs.tf
+         └─ alb
+            ├─ main.tf
+            ├─ variables.tf
+            └─ outputs.tf
