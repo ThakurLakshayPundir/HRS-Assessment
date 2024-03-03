@@ -1,0 +1,30 @@
+import boto3
+import csv
+
+def export_redis_data_to_s3(redis_host, redis_port, s3_bucket, s3_key):
+    client = boto3.client('elasticache')
+
+    redis = boto3.client('redis', endpoint_url=f'{redis_host}:{redis_port}')
+    redis_data = redis.get_all_keys()
+
+    csv_data = []
+    for key, value in redis_data.items():
+        csv_data.append([key, value])
+
+    s3 = boto3.client('s3')
+    csv_file_path = '/tmp/redis_data.csv'
+    with open(csv_file_path, 'w', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerow(['Key', 'Value'])  
+        writer.writerows(csv_data)  
+
+    s3.upload_file(csv_file_path, s3_bucket, s3_key)
+    print(f"CSV data uploaded to S3 bucket: s3://{s3_bucket}/{s3_key}")
+
+if __name__ == "__main__":
+    redis_host = 'no_redis_host_present'
+    redis_port = 6379
+    s3_bucket = 'no_s3_bucket_present'
+    s3_key = 'redis_data.csv'
+
+    export_redis_data_to_s3(redis_host, redis_port, s3_bucket, s3_key)
