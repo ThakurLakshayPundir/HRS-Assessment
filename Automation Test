@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+    
+    environment {
+        AWS_DEFAULT_REGION = 'your-aws-region'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'your-gitlab-repository-url'
+            }
+        }
+        
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    docker.build('java-application-image')
+                }
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                script {
+                    docker.image('java-application-image').run('--entrypoint=mvn test')
+                }
+            }
+        }
+
+        stage('Deploy to AWS Lambda') {
+            steps {
+                script {
+                    sh 'sam validate'
+                    sh 'sam build'
+                    sh 'sam deploy --stack-name java-application --capabilities CAPABILITY_IAM'
+                }
+            }
+        }
+        
+        stage('Cleanup') {
+            steps {
+                script {
+                    docker.image('java-application-image').remove()
+                }
+            }
+        }
+    }
+}
